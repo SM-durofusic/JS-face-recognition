@@ -1,32 +1,41 @@
-window.onload = function() {
-  const video = document.getElementById('video');
-  const canvas = document.getElementById('canvas');
-  const context = canvas.getContext('2d');
+window.onload = () => {
+  var typeSelect = document.getElementById('type-select');
+  var video = document.getElementById('video');
+  var canvas = document.getElementById('canvas');
+  var context = canvas.getContext('2d');
 
-  addRocket(video, canvas, context);
+  var selectedType = 'face';
+  typeSelect.addEventListener('change', () => {
+    selectedType = typeSelect[typeSelect.selectedIndex].value;
+    selectType(selectedType, video, canvas, context);
+  });
+  selectType(selectedType, video, canvas, context);
 };
 
-const addRocket = (video, canvas, context) => {
-  // initialize tracker
-  const tracker = new tracking.ObjectTracker(['face']);
-  // set properties of face tracking
+const selectType = (selectedType, video, canvas, context) => {
+  trackerFunc(selectedType, video, canvas, context);
+};
+
+const trackerFunc = (type, video, canvas, context) => {
+  const tracker = new tracking.ObjectTracker([type]);
   tracker.setInitialScale(4);
-  tracker.setStepSize(0.8);
+  tracker.setStepSize(1);
   tracker.setEdgesDensity(0.1);
 
-  // initialize tracking on camera
   tracking.track('#video', tracker, { camera: true });
-  // add tracking event
+
   tracker.on('track', function(event) {
     // remove previous rectange
     context.clearRect(0, 0, canvas.width, canvas.height);
     if (event.data.length !== 0) {
       // face tracking found something
       event.data.forEach((rect) => {
-        // add image on top of face
-        const image = new Image();
-        image.src = '../assets/rocket.svg';
-        context.drawImage(image, rect.x, rect.y, rect.width, rect.height);
+        context.strokeStyle = '#a64ceb';
+        context.strokeRect(rect.x, rect.y, rect.width, rect.height);
+        context.font = '11px Helvetica';
+        context.fillStyle = '#fff';
+        context.fillText('x: ' + rect.x + 'px', rect.x + rect.width + 5, rect.y + 11);
+        context.fillText('y: ' + rect.y + 'px', rect.x + rect.width + 5, rect.y + 22);
       });
     }
   });
