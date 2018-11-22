@@ -1,0 +1,19 @@
+html,
+body {
+  background-color: lavender;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+}
+
+/* position canvas over video */
+
+.app{
+  position: relative;
+  margin-top: 50px;
+}
+.app canvas, .app #video{
+  position: absolute;
+  top: 0;
+  left: 0;
+}
